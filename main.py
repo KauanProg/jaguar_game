@@ -30,7 +30,7 @@ def alpha_beta_search(state, depth):
     return best_move
 
 def max_value(state, depth, alpha, beta):
-    if depth == 0 or game_over(state):
+    if depth == 0 or get_game_over(state):
         return evaluate(state)
 
     value = float('-inf')
@@ -45,7 +45,7 @@ def max_value(state, depth, alpha, beta):
     return value
 
 def min_value(state, depth, alpha, beta):
-    if depth == 0 or game_over(state):
+    if depth == 0 or get_game_over(state):
         return evaluate(state)
 
     value = float('inf')
@@ -65,15 +65,62 @@ def get_jaguar_position(board):
             if board[row][col] == '2':
                return (row, col)
 
+def get_dogs_position(board):
+    dogs_position = {}
+    counter_dogs = 0
+
+    for row in range(8):
+        for col in range(5):
+            if board[row][col] == '1':
+                counter_dogs += 1
+                dogs_position[counter_dogs] = (row, col)
+
+    return dogs_position
+
 def get_possible_moves_dogs(board):
     possible_moves_dogs = {}
     counter_dogs = 0
 
     for row in range(8):
         for col in range(5):
-            if board[row][col] == '0':
+            if board[row][col] == '1':
                 counter_dogs += 1
-                possible_moves_dogs[counter_dogs] = (row, col)
+                possible_moves_dogs[counter_dogs] = []
+
+                # Verificar frente
+                if row + 1 < 8 and board[row + 1][col] == '0':
+                    possible_moves_dogs[counter_dogs].append((row + 1, col))
+
+                # Verificar Atrás
+                if row - 1 >= 0 and board[row - 1][col] == '0':
+                    possible_moves_dogs[counter_dogs].append((row - 1, col))
+
+                # Verificar Esquerda
+                if col - 1 >= 0 and board[row][col - 1] == '0':
+                    possible_moves_dogs[counter_dogs].append((row, col - 1))
+
+                # Verificar Direita
+                if col + 1 < 5 and board[row][col + 1] == '0':
+                    possible_moves_dogs[counter_dogs].append((row, col + 1))
+
+                # Verificar Superior Esquerda
+                if row - 1 >= 0 and col - 1 >= 0 and board[row - 1][col - 1] == '0':
+                    possible_moves_dogs[counter_dogs].append((row - 1, col - 1))
+
+                # Verificar Inferior Esquerda
+                if row + 1 < 8 and col - 1 >= 0 and board[row + 1][col - 1] == '0':
+                    possible_moves_dogs[counter_dogs].append((row + 1, col - 1))
+
+                # Verificar Superior Direira
+                if row - 1 >= 0 and col + 1 < 5 and board[row - 1][col + 1] == '0':
+                    possible_moves_dogs[counter_dogs].append((row - 1, col + 1))
+
+                # Verificar Inferior Direira
+                if row + 1 < 8 and col + 1 < 5 and board[row + 1][col + 1] == '0':
+                    possible_moves_dogs[counter_dogs].append((row + 1, col + 1))
+
+                # Ordenar os movimentos para o cachorro atual
+                possible_moves_dogs[counter_dogs] = sorted(possible_moves_dogs[counter_dogs])
 
     return possible_moves_dogs
 
@@ -146,11 +193,7 @@ def make_move(board, move):
     pass
 
 # Implemente a lógica para verificar se o jogo acabou no estado atual
-def game_over(board):
-    pass
-
-# Implemente a lógica para avaliar o estado do jogo
-def evaluate(board):
+def get_game_over(board):
     quantity_dogs = 0
     
     for row in range(8):
@@ -161,12 +204,28 @@ def evaluate(board):
     if quantity_dogs == 9:            
         return 'Game Over'
 
+# Implemente a lógica para avaliar o estado do jogo
+def get_game_winner(board):
+    if get_jaguar_position(board) in get_prison_zone(board):
+        return True
+    elif not get_possible_moves_jaguar(board):
+        return True
+    else:
+        return False
+
+def get_prison_zone(board):
+    prison_zone_positions = [(5,2), (6,1), (6,2), (6,3), (7,1), (7,2), (7,3)]
+    
+    return prison_zone_positions
+
 # max_depth = 3
 # best_move = alpha_beta_search(tabuleiro, max_depth)
 # print("Melhor movimento:", best_move)
 
 print_board(board)
-print(f"\nMovimentos Cachorros = {get_possible_moves_dogs(board)}\n")
+print(f"\nPosição dos Cachorros = {get_dogs_position(board)}\n")
+print(f"Movimentos Cachorros = {get_possible_moves_dogs(board)}\n")
 print(f"Posição da Onça = {get_jaguar_position(board)}")
 print(f"\nMovimentos Onça = {get_possible_moves_jaguar(board)}\n")
-# print(evaluate(board))
+print(f"Zona de Prisão = {get_prison_zone(board)}\n")
+print(f"Vencedor = {get_game_winner(board)}\n")
