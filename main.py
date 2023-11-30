@@ -188,11 +188,77 @@ def get_possible_moves_jaguar(board):
 
     return sorted(possible_moves_jaguar)
 
-# Implemente a lógica para realizar um movimento no estado do jogo
-def make_move(board, move):
-    pass
+def is_valid_move_dogs(board, dog, move):
+    if move in get_empty_zone(board):
+        return False
+    
+    if board[move[0]][move[1]] != '0':
+        return False
+    
+    if move == get_jaguar_position(board):
+        return False
+    
+    if move[0] < 0 or move[0] >= 8 or move[1] < 0 or move[1] >= 5:
+        return False
+    
+    current_position = get_dogs_position(board)[dog]
+    
+    valid_moves = [
+        (current_position[0] + 1, current_position[1]),
+        (current_position[0] - 1, current_position[1]),
+        (current_position[0], current_position[1] + 1),
+        (current_position[0], current_position[1] - 1),
+        (current_position[0] + 1, current_position[1] + 1),
+        (current_position[0] - 1, current_position[1] - 1),
+        (current_position[0] + 1, current_position[1] - 1),
+        (current_position[0] - 1, current_position[1] + 1),
+    ]
+    
+    is_valid = move in valid_moves
+    
+    return is_valid
 
-# Implemente a lógica para verificar se o jogo acabou no estado atual
+def make_move_dogs(board, dog, move):
+    if is_valid_move_dogs(board, dog, move):
+        current_position = get_dogs_position(board)[dog]
+
+        board[move[0]][move[1]] = '1'
+        board[current_position[0]][current_position[1]] = '0'
+
+def is_valid_move_jaguar(board, move):
+    if move in get_empty_zone(board):
+        return False
+    
+    if board[move[0]][move[1]] != '0':
+        return False
+
+    if move[0] < 0 or move[0] >= 8 or move[1] < 0 or move[1] >= 5:
+        return False
+    
+    current_position = get_jaguar_position(board)
+    
+    valid_moves = [
+        (current_position[0] + 1, current_position[1]),
+        (current_position[0] - 1, current_position[1]),
+        (current_position[0], current_position[1] + 1),
+        (current_position[0], current_position[1] - 1),
+        (current_position[0] + 1, current_position[1] + 1),
+        (current_position[0] - 1, current_position[1] - 1),
+        (current_position[0] + 1, current_position[1] - 1),
+        (current_position[0] - 1, current_position[1] + 1),
+    ]
+    
+    is_valid = move in valid_moves
+    
+    return is_valid
+
+def make_move_jaguar(board, move):
+    if is_valid_move_jaguar(board, move):
+        current_position = get_jaguar_position(board)
+
+        board[move[0]][move[1]] = '2'
+        board[current_position[0]][current_position[1]] = '0'
+
 def get_game_over(board):
     quantity_dogs = 0
     
@@ -204,7 +270,6 @@ def get_game_over(board):
     if quantity_dogs == 9:            
         return 'Game Over'
 
-# Implemente a lógica para avaliar o estado do jogo
 def get_game_winner(board):
     if get_jaguar_position(board) in get_prison_zone(board):
         return True
@@ -218,6 +283,11 @@ def get_prison_zone(board):
     
     return prison_zone_positions
 
+def get_empty_zone(board):
+    empty_zone_positions = [(5,0), (5,1), (5,3), (5,4), (6,0), (6,4), (7,0), (7,4)]
+    
+    return empty_zone_positions
+
 # max_depth = 3
 # best_move = alpha_beta_search(tabuleiro, max_depth)
 # print("Melhor movimento:", best_move)
@@ -229,3 +299,13 @@ print(f"Posição da Onça = {get_jaguar_position(board)}")
 print(f"\nMovimentos Onça = {get_possible_moves_jaguar(board)}\n")
 print(f"Zona de Prisão = {get_prison_zone(board)}\n")
 print(f"Vencedor = {get_game_winner(board)}\n")
+
+# make_move_dogs(board, 14, (3, 4))
+
+# print("\nTabuleiro Após o Movimento:")
+# print_board(board)
+
+# make_move_jaguar(board, (5, 2))
+
+# print("\nTabuleiro Após o Movimento:")
+# print_board(board)
