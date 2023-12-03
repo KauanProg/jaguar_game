@@ -1,3 +1,7 @@
+# Kauan Deyvid Bezerra de Sousa - 510270
+# Marcos Gabriel De Mesquita Mauricio - 509127
+# Billy Grahan Alves Rodrigues - 508010
+
 board = [
     ['1', '1', '1', '1', '1'],
     ['1', '1', '1', '1', '1'],
@@ -80,6 +84,12 @@ def get_possible_moves_dogs(board):
     return possible_moves_dogs
 
 def get_possible_moves_jaguar(board):
+    if get_possible_moves_jaguar_eat_dog(board):
+        return (get_possible_moves_jaguar_eat_dog(board), 1)
+    else:
+        return (get_possible_moves_jaguar_empty_space(board), 0)
+
+def get_possible_moves_jaguar_eat_dog(board):
     possible_moves_jaguar = []
 
     for row in range(8):
@@ -89,50 +99,61 @@ def get_possible_moves_jaguar(board):
                 if row + 2 < 8 and board[row + 1][col] == '1' and board[row + 2][col] == '0':
                     possible_moves_jaguar.append((row + 2, col))
                     
-                if row + 1 < 8 and board[row + 1][col] == '0':
-                    possible_moves_jaguar.append((row + 1, col))
-                    
                 if row - 2 >= 0 and board[row - 1][col] == '1' and board[row - 2][col] == '0':
                     possible_moves_jaguar.append((row - 2, col))
                     
-                if row - 1 >= 0 and board[row - 1][col] == '0':
-                    possible_moves_jaguar.append((row - 1, col))
-                
                 # Verificar movimentos na horizontal
                 if col + 2 < 5 and board[row][col + 1] == '1' and board[row][col + 2] == '0':
                     possible_moves_jaguar.append((row, col + 2))
                     
-                if col + 1 < 5 and board[row][col + 1] == '0':
-                    possible_moves_jaguar.append((row, col + 1))
-                    
                 if col - 2 >= 0 and board[row][col - 1] == '1' and board[row][col - 2] == '0':
                     possible_moves_jaguar.append((row, col - 2))
-                    
-                if col - 1 >= 0 and board[row][col - 1] == '0':
-                    possible_moves_jaguar.append((row, col - 1))
                 
                 # Verificar movimentos na diagonal
                 if row - 2 >= 0 and col - 2 >= 0 and board[row - 1][col - 1] == '1' and board[row - 2][col - 2] == '0':
                     possible_moves_jaguar.append((row - 2, col - 2))
                     
-                if row - 1 >= 0 and col - 1 >= 0 and board[row - 1][col - 1] == '0':
-                    possible_moves_jaguar.append((row - 1, col - 1))
-                    
                 if row + 2 < 8 and col - 2 >= 0 and board[row + 1][col - 1] == '1' and board[row + 2][col - 2] == '0':
                     possible_moves_jaguar.append((row + 2, col - 2))
                     
-                if row + 1 < 8 and col - 1 >= 0 and board[row + 1][col - 1] == '0':
-                    possible_moves_jaguar.append((row + 1, col - 1))
-                
                 if row - 2 >= 0 and col + 2 < 5 and board[row - 1][col + 1] == '1' and board[row - 2][col + 2] == '0':
                     possible_moves_jaguar.append((row - 2, col + 2))
-                    
-                if row - 1 >= 0 and col + 1 < 5 and board[row - 1][col + 1] == '0':
-                    possible_moves_jaguar.append((row - 1, col + 1))
                     
                 if row + 2 < 8 and col + 2 < 5 and board[row + 1][col + 1] == '1' and board[row + 2][col + 2] == '0':
                     possible_moves_jaguar.append((row + 2, col + 2))
                     
+    return sorted(possible_moves_jaguar)
+
+def get_possible_moves_jaguar_empty_space(board):
+    possible_moves_jaguar = []
+
+    for row in range(8):
+        for col in range(5):
+            if board[row][col] == '2':
+                # Verificar movimentos na vertical
+                if row + 1 < 8 and board[row + 1][col] == '0':
+                    possible_moves_jaguar.append((row + 1, col))
+                    
+                if row - 1 >= 0 and board[row - 1][col] == '0':
+                    possible_moves_jaguar.append((row - 1, col))
+                
+                # Verificar movimentos na horizontal
+                if col + 1 < 5 and board[row][col + 1] == '0':
+                    possible_moves_jaguar.append((row, col + 1))
+
+                if col - 1 >= 0 and board[row][col - 1] == '0':
+                    possible_moves_jaguar.append((row, col - 1))
+                
+                # Verificar movimentos na diagonal
+                if row - 1 >= 0 and col - 1 >= 0 and board[row - 1][col - 1] == '0':
+                    possible_moves_jaguar.append((row - 1, col - 1))
+                    
+                if row + 1 < 8 and col - 1 >= 0 and board[row + 1][col - 1] == '0':
+                    possible_moves_jaguar.append((row + 1, col - 1))
+                    
+                if row - 1 >= 0 and col + 1 < 5 and board[row - 1][col + 1] == '0':
+                    possible_moves_jaguar.append((row - 1, col + 1))
+ 
                 if row + 1 < 8 and col + 1 < 5 and board[row + 1][col + 1] == '0':
                     possible_moves_jaguar.append((row + 1, col + 1))
 
@@ -149,10 +170,7 @@ def get_position_board(position):
             value_board += 1
 
 def is_valid_move_dogs(board, dog, move):
-    current_position = get_dogs_position(board)[dog]
-    value_board = get_position_board(current_position)
-    
-    for position in get_possible_moves_dogs(board)[value_board]:
+    for position in get_possible_moves_dogs(board)[dog]:
         if position == move:
             return True
     
@@ -166,22 +184,31 @@ def make_move_dogs(board, dog, move):
         board[current_position[0]][current_position[1]] = '0'
 
 def is_valid_move_jaguar(board, move):
-    current_position = get_jaguar_position(board)
-    value_board = get_position_board(current_position)
+    check_moves = get_possible_moves_jaguar(board)
     
-    for position in get_possible_moves_jaguar(board):
+    for position in check_moves[0]:
         if position == move:
-            return True
+            return (True, check_moves[1])
     
     return False
 
 def make_move_jaguar(board, move):
-    if is_valid_move_jaguar(board, move):
+    check_moves = is_valid_move_jaguar(board, move)
+
+    if check_moves[0]:
         current_position = get_jaguar_position(board)
 
-        board[move[0]][move[1]] = '2'
-        board[current_position[0]][current_position[1]] = '0'
+        if check_moves[1] == 0:
+            board[move[0]][move[1]] = '2'
+            board[current_position[0]][current_position[1]] = '0'
+        else:
+            eaten_dog_position = ((current_position[0] + move[0]) // 2, (current_position[1] + move[1]) // 2)
 
+            board[eaten_dog_position[0]][eaten_dog_position[1]] = '0'
+
+            board[move[0]][move[1]] = '2'
+            board[current_position[0]][current_position[1]] = '0'
+       
 def get_game_over(board):
     quantity_dogs = 0
     
@@ -196,14 +223,14 @@ def get_game_over(board):
         False
 
 def get_game_winner(board):
-    if get_jaguar_position(board) in get_prison_zone(board):
+    if get_jaguar_position(board) in get_prison_zone():
         return True
-    elif not get_possible_moves_jaguar(board):
+    elif not get_possible_moves_jaguar(board)[0]:
         return True
     else:
         return False
 
-def get_prison_zone(board):
+def get_prison_zone():
     prison_zone_positions = [(5,2), (6,1), (6,2), (6,3), (7,1), (7,2), (7,3)]
     
     return prison_zone_positions
@@ -213,7 +240,7 @@ def max_value(board, depth, alpha, beta):
         return 0
 
     value = float('-inf')
-    for move in get_possible_moves_jaguar(board):
+    for move in get_possible_moves_jaguar(board)[0]:
         value = max(get_position_board(move), min_value(board, depth - 1, alpha, beta))
         alpha = max(alpha, get_position_board(move))
         
@@ -227,7 +254,7 @@ def min_value(board, depth, alpha, beta):
         return 0
 
     value = float('inf')
-    for move in get_possible_moves_jaguar(board):
+    for move in get_possible_moves_jaguar(board)[0]:
         value = min(get_position_board(move), max_value(board, depth - 1, alpha, beta))
         beta = min(beta, get_position_board(move))
         
@@ -242,7 +269,7 @@ def alpha_beta_search(board, depth):
     alpha = float('-inf')
     beta = float('inf')
 
-    for move in get_possible_moves_jaguar(board):
+    for move in get_possible_moves_jaguar(board)[0]:
         value = min_value(board, depth - 1, alpha, beta)
         
         if value > max_value:
@@ -284,8 +311,8 @@ while True:
         current_player = 2
     else:
         print(f"\nPosição da Onça = {get_jaguar_position(board)}")
-        print(f"Movimentos Possíveis Para a Onça = {get_possible_moves_jaguar(board)}\n")
-
+        print(f"Movimentos Possíveis Para a Onça = {get_possible_moves_jaguar(board)[0]}\n")
+        
         best_move = alpha_beta_search(board, max_depth)
         print(f"Melhor movimento: {best_move}\n")
         
