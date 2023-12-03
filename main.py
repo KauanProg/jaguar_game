@@ -1,3 +1,4 @@
+# Equipe
 # Kauan Deyvid Bezerra de Sousa - 510270
 # Marcos Gabriel De Mesquita Mauricio - 509127
 # Billy Grahan Alves Rodrigues - 508010
@@ -5,8 +6,8 @@
 board = [
     ['1', '1', '1', '1', '1'],
     ['1', '1', '1', '1', '1'],
-    ['1', '1', '2', '1', '1'],
-    ['0', '0', '0', '0', '0'],
+    ['1', '0', '0', '0', '1'],
+    ['2', '1', '0', '1', '0'],
     ['0', '0', '0', '0', '0'],
     ['4', '4', '3', '4', '4'],
     ['4', '3', '3', '3', '4'],
@@ -313,11 +314,12 @@ while True:
         print(f"\nPosição da Onça = {get_jaguar_position(board)}")
         print(f"Movimentos Possíveis Para a Onça = {get_possible_moves_jaguar(board)[0]}\n")
         
-        best_move = alpha_beta_search(board, max_depth)
-        print(f"Melhor movimento: {best_move}\n")
-        
-        make_move_jaguar(board, best_move)
-        
-        print_board(board)
+        while len(get_possible_moves_jaguar_eat_dog(board)) >= 1:
+            best_move = alpha_beta_search(board, max_depth)
+            print(f"Melhor movimento: {best_move}\n")
+            
+            make_move_jaguar(board, best_move)
+            
+            print_board(board)
         
         current_player = 1
