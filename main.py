@@ -6,8 +6,8 @@
 board = [
     ['1', '1', '1', '1', '1'],
     ['1', '1', '1', '1', '1'],
-    ['1', '0', '0', '0', '1'],
-    ['2', '1', '0', '1', '0'],
+    ['1', '1', '2', '1', '1'],
+    ['0', '0', '0', '0', '0'],
     ['0', '0', '0', '0', '0'],
     ['4', '4', '3', '4', '4'],
     ['4', '3', '3', '3', '4'],
@@ -301,8 +301,17 @@ while True:
         print(f"Movimentos Possíveis Para os Cachorros = {get_possible_moves_dogs(board)}\n")
         
         selected_dog = int(input("Escolha Um Cachorro: "))
+        while selected_dog not in get_dogs_position(board).keys():
+            print("O Cachorro Não Existe!") 
+            selected_dog = int(input("Escolha Um Cachorro: "))
+            
         row_dog = int(input("Escolha a Linha do Movimento: "))
         col_dog = int(input("Escolha a Coluna do Movimento: "))
+
+        while (row_dog, col_dog) not in get_possible_moves_dogs(board)[selected_dog]:    
+            print("Movimento Inválido Para o Cachorro Escolhido")
+            row_dog = int(input("Escolha a Linha do Movimento: "))
+            col_dog = int(input("Escolha a Coluna do Movimento: "))
 
         print()
         make_move_dogs(board, selected_dog, (row_dog, col_dog))
@@ -320,6 +329,6 @@ while True:
             
             make_move_jaguar(board, best_move)
             
-            print_board(board)
+        print_board(board)
         
         current_player = 1
